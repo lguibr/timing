@@ -2,11 +2,14 @@
 import json
 from typing import Dict, List
 
+
 def generate_html_scaffold(components: Dict) -> str:
     """Assembles the final HTML file with dynamic controls and multiple charts."""
-    
-    tag_keys: List[str] = components['tag_keys']
-    group_by_options = "".join([f'<option value="tags.{key}">{key}</option>' for key in tag_keys])
+
+    tag_keys: List[str] = components["tag_keys"]
+    group_by_options = "".join(
+        [f'<option value="tags.{key}">{key}</option>' for key in tag_keys]
+    )
 
     return f"""
 <!DOCTYPE html>
@@ -65,7 +68,7 @@ def generate_html_scaffold(components: Dict) -> str:
     <h2>All Events (Details)</h2>
     <table id="details-table" class="display compact" style="width:100%">
         <thead><tr><th>Timestamp</th><th>Marker Name</th><th>Process ID</th><th>Duration (ms)</th><th>Event ID</th><th>Tags</th></tr></thead>
-        <tbody>{components['details_table_body']}</tbody>
+        <tbody>{components["details_table_body"]}</tbody>
     </table>
 
     <div id="details-modal" class="modal">
@@ -82,8 +85,8 @@ def generate_html_scaffold(components: Dict) -> str:
     <script>
         const PLOTLY_THEME = 'plotly_dark';
         const PLOTLY_COLORS = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52'];
-        const allEvents = {components['all_events_json']};
-        const eventDataMap = {json.dumps(components['event_data_map'])};
+        const allEvents = {components["all_events_json"]};
+        const eventDataMap = {json.dumps(components["event_data_map"])};
 
         allEvents.forEach(d => {{
             d.start_time = new Date(d.start_time);

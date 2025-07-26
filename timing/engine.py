@@ -10,6 +10,7 @@ from .storage.sqlite import SqliteStorage
 
 logger = logging.getLogger(__name__)
 
+
 class TimingEngine:
     def __init__(self) -> None:
         self._storage: Optional[BaseStorage] = None
@@ -24,7 +25,9 @@ class TimingEngine:
 
     def setup(self) -> None:
         if not self.is_enabled():
-            print("⚠️ Timing tool is disabled (TIMING_TOOL_ENABLED is not 'true'). Skipping DB setup.")
+            print(
+                "⚠️ Timing tool is disabled (TIMING_TOOL_ENABLED is not 'true'). Skipping DB setup."
+            )
             return
         self.get_storage().setup()
         print(f"✅ Timing database setup complete for: {timing_settings.DB_PATH}")
@@ -36,24 +39,34 @@ class TimingEngine:
             self.get_storage().write_start(event)
             return event.id
         except Exception as e:
-            logger.error(f"TIMING: Failed to start event '{marker_name}': {e}", exc_info=True)
+            logger.error(
+                f"TIMING: Failed to start event '{marker_name}': {e}", exc_info=True
+            )
             return None
 
     def stop_event(self, event_id: UUID) -> None:
         try:
             event = self.get_storage().read(event_id)
             if not event:
-                logger.warning(f"TIMING: Could not find event with ID '{event_id}' to stop.")
+                logger.warning(
+                    f"TIMING: Could not find event with ID '{event_id}' to stop."
+                )
                 return
             event.stop()
             self.get_storage().write_stop(event)
             # --- MODIFICATION: Log tags instead of context ---
             tags_str = f" (Tags: {event.tags})" if event.tags else ""
-            logger.info(f"TIMING: '{event.marker_name}' took {event.duration_ms:.2f}ms.{tags_str}")
+            logger.info(
+                f"TIMING: '{event.marker_name}' took {event.duration_ms:.2f}ms.{tags_str}"
+            )
         except Exception as e:
-            logger.error(f"TIMING: Failed to stop event '{event_id}': {e}", exc_info=True)
+            logger.error(
+                f"TIMING: Failed to stop event '{event_id}': {e}", exc_info=True
+            )
+
 
 _engine_instance: Optional[TimingEngine] = None
+
 
 def get_engine() -> TimingEngine:
     global _engine_instance

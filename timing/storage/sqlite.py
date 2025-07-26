@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS timing_events (
 );
 """
 
+
 class SqliteStorage(BaseStorage):
     def __init__(self, db_path: Path):
         self.db_path = db_path
@@ -61,7 +62,9 @@ class SqliteStorage(BaseStorage):
     def read(self, event_id: UUID) -> Optional[TimingEvent]:
         with self._conn() as c:
             c.row_factory = sqlite3.Row
-            row = c.execute("SELECT * FROM timing_events WHERE id = ?", (str(event_id),)).fetchone()
+            row = c.execute(
+                "SELECT * FROM timing_events WHERE id = ?", (str(event_id),)
+            ).fetchone()
             if not row:
                 return None
             return self._row_to_event(row)

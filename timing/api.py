@@ -6,6 +6,7 @@ from uuid import UUID
 
 from .engine import get_engine
 
+
 @contextmanager
 def time_block(marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any):
     """
@@ -18,7 +19,7 @@ def time_block(marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any):
     if not engine.is_enabled():
         yield
         return
-    
+
     final_tags = {**(tags or {}), **kwargs}
 
     event_id = engine.start_event(marker_name, final_tags)
@@ -28,10 +29,13 @@ def time_block(marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any):
         if event_id:
             engine.stop_event(event_id)
 
-def time_function(_func: Callable = None, *, tags: Dict[str, Any] = None, **kwargs: Any):
+
+def time_function(
+    _func: Callable = None, *, tags: Dict[str, Any] = None, **kwargs: Any
+):
     """
     A decorator to time an entire function. Can be used with or without arguments.
-    
+
     Usage:
         @time_function
         def my_func(): ...
@@ -51,6 +55,7 @@ def time_function(_func: Callable = None, *, tags: Dict[str, Any] = None, **kwar
             marker_name = func.__name__
             with time_block(marker_name, tags=final_tags):
                 return func(*args, **kwargs)
+
         return wrapper
 
     if _func is None:
@@ -60,7 +65,10 @@ def time_function(_func: Callable = None, *, tags: Dict[str, Any] = None, **kwar
         # Called as @time_function
         return decorator(_func)
 
-def time_start(marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any) -> UUID | None:
+
+def time_start(
+    marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any
+) -> UUID | None:
     """
     Manually starts a timer and returns a unique event ID.
     :param marker_name: The name for this timing event.
@@ -70,9 +78,10 @@ def time_start(marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any) -> 
     engine = get_engine()
     if not engine.is_enabled():
         return None
-    
+
     final_tags = {**(tags or {}), **kwargs}
     return engine.start_event(marker_name, final_tags)
+
 
 def time_stop(event_id: UUID):
     """

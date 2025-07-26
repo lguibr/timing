@@ -7,17 +7,19 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
+
 class TimingEvent(BaseModel):
     """
     One logical timing span with structured, queryable tags.
     """
+
     id: UUID = Field(default_factory=uuid4)
     marker_name: str
     process_id: int = Field(default_factory=os.getpid)
 
     start_utc: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     end_utc: Optional[datetime] = None
-    
+
     start_perf_ns: int = Field(default_factory=time.perf_counter_ns)
     duration_ms: Optional[float] = None
 

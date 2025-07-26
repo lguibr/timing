@@ -10,6 +10,7 @@ from ..storage.sqlite import SqliteStorage
 
 logger = logging.getLogger(__name__)
 
+
 def _human_tags(tags: Optional[dict]) -> str:
     """Pretty JSON for modal display."""
     try:
@@ -17,6 +18,7 @@ def _human_tags(tags: Optional[dict]) -> str:
     except Exception as exc:
         logger.warning("Failed to pretty‑print tags: %s", exc)
         return "{}"
+
 
 def load_data_from_db() -> pd.DataFrame:
     """
@@ -42,20 +44,23 @@ def load_data_from_db() -> pd.DataFrame:
     df["duration_ms"] = df["duration_ms"].round(2)
 
     t0 = df["start_time"].min()
-    df["start_ms_relative"] = ((df["start_time"] - t0).dt.total_seconds() * 1000).round(2)
+    df["start_ms_relative"] = ((df["start_time"] - t0).dt.total_seconds() * 1000).round(
+        2
+    )
     df["start_str"] = df["start_ms_relative"].astype(str) + " ms"
-    
+
     # --- MODIFICATION: Handle tags ---
     df["tags_pretty"] = df["tags"].apply(_human_tags)
     df["id"] = df["id"].astype(str)
-    
+
     # Explode tags into their own columns for filtering (e.g., 'tags.action', 'tags.chain')
-    tags_df = pd.json_normalize(df['tags']).add_prefix('tags.')
+    tags_df = pd.json_normalize(df["tags"]).add_prefix("tags.")
     df = pd.concat([df, tags_df], axis=1)
 
     # Create the main label
     df["label"] = df.apply(
-        lambda r: f"{r['marker_name']} (PID: {r['process_id']}) ({r['duration_ms']:.2f} ms)", axis=1
+        lambda r: f"{r['marker_name']} (PID: {r['process_id']}) ({r['duration_ms']:.2f} ms)",
+        axis=1,
     )
 
     logger.info("Loaded %d validated events for dashboard.", len(df))

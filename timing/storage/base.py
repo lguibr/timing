@@ -4,6 +4,7 @@ from uuid import UUID
 from typing import Optional, List
 from ..models import TimingEvent
 
+
 class BaseStorage(ABC):
     @abstractmethod
     def setup(self) -> None:
@@ -20,7 +21,7 @@ class BaseStorage(ABC):
     @abstractmethod
     def write_stop(self, event: TimingEvent) -> None:
         pass
-        
+
     @abstractmethod
     def read_all_completed(self) -> List[TimingEvent]:
         pass
