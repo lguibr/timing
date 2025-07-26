@@ -1,4 +1,4 @@
-# Performance Timing Module (`timing`)
+# Performance Timing Module (`tmng`)
 
 A framework-agnostic, process-safe, local performance timer for Python applications, designed for easy development and debugging. It logs timing data to a local SQLite file, avoiding external dependencies and network latency.
 
@@ -17,11 +17,10 @@ This module is built for reliability, using **Pydantic** for rigorous data valid
 
 ## Quickstart
 
-1.  **Install the Package:**
+1.  **Install the Package from PyPI:**
     ```bash
-    pip install .
+    pip install tmng
     ```
-    *(From the directory containing `pyproject.toml`)*
 
 2.  **Enable the Timer:**
     This only needs to be done once. It creates a config file in your user directory.
@@ -85,7 +84,6 @@ For servers or CI/CD, you can override the global config with environment variab
 
 ## Viewing the Data
 
-You can still use any SQLite client to view the `timing_log.db` file or use the built-in report generator:
-```bash
+You can still use any SQLite client to view the `timing_log.db` file or use the built-in report generator:```bash
 timing report
 ```

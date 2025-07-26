@@ -3,8 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "py-timing-tool"
-version = "1.0.0"
+# --- THIS IS THE CRITICAL CHANGE ---
+name = "tmng"
+version = "1.0.0" # Remember to increment this for new releases
 authors = [{ name="Your Name", email="you@example.com" }]
 description = "A framework-agnostic, process-safe, local performance timer for Python applications."
 readme = "README.md"
@@ -23,7 +24,6 @@ dependencies = [
     "appdirs"
 ]
 
-# --- NEW: Add development dependencies here ---
 [project.optional-dependencies]
 dev = ["ruff", "pytest", "build"]
 
