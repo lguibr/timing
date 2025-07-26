@@ -1,0 +1,76 @@
+name: Python Package CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  release:
+    types: [created] 
+
+jobs:
+  test:
+    name: Test on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Install the package in editable mode with the 'dev' extras
+        pip install -e .[dev]
+
+    - name: Lint with ruff
+      run: |
+        ruff check .
+
+    - name: Format with ruff
+      run: |
+        ruff format --check .
+
+    - name: Test with pytest
+      run: |
+        # This step is a placeholder. Create a 'tests/' directory
+        # with pytest files to make this step meaningful.
+        pytest
+
+  publish:
+    name: Publish to PyPI
+    # This job only runs when a new release is created on GitHub
+    if: github.event_name == 'release' && github.event.action == 'created'
+    needs: test # Ensures tests pass before publishing
+    runs-on: ubuntu-latest
+    
+    permissions:
+      # This permission is required for trusted publishing
+      id-token: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install build tools
+      run: python -m pip install build
+
+    - name: Build package
+      run: python -m build
+
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
