@@ -84,6 +84,7 @@ For servers or CI/CD, you can override the global config with environment variab
 
 ## Viewing the Data
 
-You can still use any SQLite client to view the `timing_log.db` file or use the built-in report generator:```bash
+You can still use any SQLite client to view the `timing_log.db` file or use the built-in report generator:
+```bash
 timing report
 ```
