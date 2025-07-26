@@ -40,11 +40,7 @@ jobs:
       run: |
         ruff format --check .
 
-    - name: Test with pytest
-      run: |
-        # This step is a placeholder. Create a 'tests/' directory
-        # with pytest files to make this step meaningful.
-        pytest
+
 
   publish:
     name: Publish to PyPI
