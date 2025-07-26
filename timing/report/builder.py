@@ -1,6 +1,5 @@
 # path: timing/report/builder.py (replace the whole file)
 from pathlib import Path
-import pandas as pd
 from timing.report import data, tables, html
 
 OUTPUT_HTML_PATH = Path.cwd() / "timing_dashboard.html"

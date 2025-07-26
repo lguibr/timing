@@ -1,7 +1,6 @@
 # path: timing/report/data.py (replace the whole file)
 import json
 import logging
-from datetime import datetime
 from typing import Optional
 
 import pandas as pd

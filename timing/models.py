@@ -1,5 +1,6 @@
 # path: timing/models.py (replace the whole file)
-import os, time
+import os
+import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
