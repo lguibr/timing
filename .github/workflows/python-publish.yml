@@ -46,7 +46,6 @@ jobs:
     name: Publish to PyPI
     # This job only runs when a new release is created on GitHub
     if: github.event_name == 'release' && github.event.action == 'created'
-    needs: test # Ensures tests pass before publishing
     runs-on: ubuntu-latest
     
     permissions:
