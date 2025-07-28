@@ -86,19 +86,18 @@ def disable():
 
 @app.command()
 def report(
-    output: Annotated[
-        Path,
-        typer.Option(
-            "--output",
-            "-o",
-            help="The path for the output HTML file.",
-            default="timing_dashboard.html",
-        ),
-    ],
-    no_open: Annotated[
-        bool,
-        typer.Option("--no-open", help="Do not open the report in a browser."),
-    ] = False,
+    # --- THIS IS THE NEW, MORE ROBUST SYNTAX ---
+    output: Path = typer.Option(
+        "timing_dashboard.html",
+        "--output",
+        "-o",
+        help="The path for the output HTML file.",
+    ),
+    no_open: bool = typer.Option(
+        False,
+        "--no-open",
+        help="Do not open the report in a browser. This makes the default False.",
+    ),
 ):
     """
     Generate and optionally open the HTML performance report.

@@ -1,5 +1,11 @@
 # Performance Timing Module (`tmng`)
 
+<img
+  src="https://raw.githubusercontent.com/lguibr/timing/main/logo.png"
+  alt="screenshot"
+  width="400"
+/>
+
 A framework-agnostic, process-safe, local performance timer for Python applications, designed for easy development and debugging. It logs timing data to a local SQLite file, avoiding external dependencies and network latency.
 
 This module is built for reliability, using **Pydantic** for rigorous data validation and serialization, ensuring that every timing event recorded is structured and correct.

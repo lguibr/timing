@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 # --- THIS IS THE CRITICAL CHANGE ---
 name = "tmng"
-version = "1.0.0" # Remember to increment this for new releases
+version = "1.1.2" # Remember to increment this for new releases
 authors = [{ name="Your Name", email="you@example.com" }]
 description = "A framework-agnostic, process-safe, local performance timer for Python applications."
 readme = "README.md"

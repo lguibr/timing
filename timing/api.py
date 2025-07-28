@@ -1,7 +1,7 @@
 # path: timing/api.py (replace the whole file)
 import functools
 from contextlib import contextmanager
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional  # <<< FIX: Import Optional
 from uuid import UUID
 
 from .engine import get_engine
@@ -68,7 +68,7 @@ def time_function(
 
 def time_start(
     marker_name: str, tags: Dict[str, Any] = None, **kwargs: Any
-) -> UUID | None:
+) -> Optional[UUID]:  # <<< FIX: Changed "UUID | None" to "Optional[UUID]"
     """
     Manually starts a timer and returns a unique event ID.
     :param marker_name: The name for this timing event.
@@ -92,3 +92,4 @@ def time_stop(event_id: UUID):
     if not engine.is_enabled() or not event_id:
         return
     engine.stop_event(event_id)
+
