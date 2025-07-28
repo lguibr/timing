@@ -92,4 +92,3 @@ def time_stop(event_id: UUID):
     if not engine.is_enabled() or not event_id:
         return
     engine.stop_event(event_id)
-

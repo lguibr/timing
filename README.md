@@ -1,96 +1,226 @@
 # Performance Timing Module (`tmng`)
 
-<img
-  src="https://raw.githubusercontent.com/lguibr/timing/main/logo.png"
-  alt="screenshot"
-  width="400"
-/>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lguibr/timing/main/logo.png" alt="tmng logo" width="400"/>
+</p>
 
-A framework-agnostic, process-safe, local performance timer for Python applications, designed for easy development and debugging. It logs timing data to a local SQLite file, avoiding external dependencies and network latency.
+<p align="center">
+  <strong>A developer-first, framework-agnostic performance timer for Python.</strong>
+  <br />
+  Designed for targeted, insightful profiling of application segments, not just line-by-line noise.
+</p>
 
-This module is built for reliability, using **Pydantic** for rigorous data validation and serialization, ensuring that every timing event recorded is structured and correct.
-
-## Key Features
-
-- **Simple CLI:** Manage the tool with intuitive commands like `timing enable`, `timing report`.
-- **Framework-Agnostic:** Works with Django, Flask, FastAPI, or any Python script.
-- **Pydantic-Powered Validation:** All timing events are validated against a strict schema.
-- **Process-Safe:** Works flawlessly across multiple processes.
-- **Globally Switchable:** Enable or disable via the CLI or an environment variable.
-- **Rich, Validated Context:** Attach metadata (e.g., `user_id`, `task_id`) to your timing events.
-
----
-
-## Quickstart
-
-1.  **Install the Package from PyPI:**
-    ```bash
-    pip install tmng
-    ```
-
-2.  **Enable the Timer:**
-    This only needs to be done once. It creates a config file in your user directory.
-    ```bash
-    timing enable
-    ```
-
-3.  **Initialize the Database:**
-    Run this once in your project's root directory to create the `timing_log.db` file.
-    ```bash
-    timing init
-    ```
-
-4.  **Add Timing to Your Code:**
-    Use the decorators or context managers as needed.
-    ```python
-    from timing import time_block, time_function
-
-    # Best for specific blocks
-    with time_block("api_call", service="xero"):
-        # ... timed code ...
-
-    # Best for entire functions
-    @time_function
-    def send_weekly_emails(user_id):
-        # ... timed function ...
-    ```
-
-5.  **Generate a Report:**
-    After your code has run, generate an interactive HTML dashboard.
-    ```bash
-    timing report
-    ```
-    This will generate `timing_dashboard.html` and open it in your browser.
+<p align="center">
+  <a href="https://pypi.org/project/tmng/"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/tmng.svg?style=flat-square&logo=pypi&logoColor=white"></a>
+  <a href="#"><img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/tmng.svg?style=flat-square&logo=python&logoColor=white"></a>
+  <a href="https://github.com/lguibr/timing/actions/workflows/python-publish.yml"><img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/lguibr/timing/.github/workflows/python-publish.yml?branch=main&style=flat-square&logo=github"></a>
+  <a href="https://github.com/lguibr/timing/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/pypi/l/tmng.svg?style=flat-square"></a>
+  <a href="https://github.com/astral-sh/ruff"><img alt="Code Style: ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square"></a>
+</p>
 
 ---
 
-## CLI Usage
+`tmng` is a local performance timer designed for clarity and ease of use during development and debugging. It helps you answer questions like, "How long did that specific business logic take for `user_id: 123`?" or "Which step in my data pipeline is the bottleneck?".
 
-The `timing` command is your main entry point for managing the tool.
+It logs structured timing data to a local SQLite file, avoiding network latency and external dependencies in your application's critical path.
 
-| Command                                        | Description                                                |
-| :--------------------------------------------- | :--------------------------------------------------------- |
-| `timing status`                                | Check if the tool is enabled and see the event count.      |
-| `timing enable`                                | Globally enables the timing tool for your user.            |
-| `timing disable`                               | Globally disables the timing tool.                         |
-| `timing init`                                  | Creates the SQLite database file in the current directory. |
-| `timing report`                                | Generates the interactive HTML report.                     |
-| `timing report --output "perf.html" --no-open` | Customize report generation.                               |
+### The Philosophy: Timing What Matters
 
----
+Many profilers measure everything, creating a sea of noise. `tmng` is different. It's built for **explicit, targeted timing** of meaningful code blocks:
+*   Business rule validations.
+*   Third-party API calls.
+*   Complex database queries or ORM operations.
+*   Steps within a background job or data pipeline.
 
-## Environment Variables
+It's the perfect tool to use *during* development to add performance instrumentation where it counts.
 
-For servers or CI/CD, you can override the global config with environment variables:
+## ✨ Key Features
 
--   `TIMING_TOOL_ENABLED`: Set to `true` to enable the timer. This takes precedence over the CLI setting.
--   `TIMING_DB_PATH`: Set the full path to your database file (e.g., `/var/data/my_app_timing.db`).
+-   🎯 **Targeted & Explicit:** No magic. You wrap the code you care about.
+-   📊 **Rich Interactive Reports:** Generate a self-contained HTML dashboard with interactive Gantt charts, flame graphs, and statistical summaries.
+-   🏷️ **Structured Tagging:** The killer feature. Add key-value tags (`user_id`, `task_id`, `source_api`) to your events, then group and filter by them in the report.
+-   ⚙️ **Framework-Agnostic:** Seamlessly integrates with Django, Flask, FastAPI, or any standalone Python script.
+-   🔒 **Process-Safe:** Reliably times operations across multiple processes, making it great for web servers or parallel jobs.
+-   🌍 **Global Control:** Enable or disable the timer globally via the CLI or an environment variable. No need to hunt down and comment out code.
+-   🚀 **Zero Runtime Overhead When Disabled:** When switched off, the decorators and context managers are virtually no-ops, making it safe to leave in your code.
 
----
+## 📈 The Interactive Dashboard
 
-## Viewing the Data
+Go beyond simple `print()` statements. The generated report is a powerful, interactive dashboard that helps you visualize performance instantly.
 
-You can still use any SQLite client to view the `timing_log.db` file or use the built-in report generator:
+<p align="center">
+  *(Image: A dynamic Gantt chart showing event durations, with controls to group events by different tags like `module` or `user_type`)*
+</p>
+
+```bash
+# After running your code, this single command builds the report and opens it.
+timing report
+```
+
+This generates a `timing_dashboard.html` file that includes:
+- An interactive Gantt chart to visualize event timelines and overlaps.
+- A Sunburst chart to explore hierarchical relationships.
+- Box plots and scatter plots for statistical analysis.
+- A fully searchable and sortable table of all recorded events.
+
+## 🚀 Quickstart
+
+#### 1. Install from PyPI
+```bash
+pip install tmng
+```
+
+#### 2. Enable The Timer (One-Time Setup)
+This creates a global configuration file in your user directory, enabling the timer for your system.
+```bash
+timing enable
+```
+
+#### 3. Initialize in Your Project
+In your project's root directory, create the local database file.
+```bash
+timing init
+```
+This will create a `timing_log.db` file. (Remember to add `*.db` to your `.gitignore`!)
+
+#### 4. Instrument Your Code
+Use the simple decorators or context managers to time key parts of your application.
+
+```python
+from timing import time_block, time_function
+
+# Use a context manager for specific blocks of code
+def process_user_data(user_id: int):
+    # ... some initial work ...
+
+    with time_block("api_call", tags={"service": "xero", "user": user_id}):
+        # Code for the slow API call you want to measure
+        ...
+
+    # ... other work ...
+
+# Use a decorator to time an entire function
+@time_function(tags={"module": "notifications"})
+def send_weekly_emails(user_id: int):
+    # Entire function is timed
+    ...
+```
+
+#### 5. Generate Your Report
+After your script has run, generate the interactive HTML dashboard.
 ```bash
 timing report
 ```
+This command generates `timing_dashboard.html` and automatically opens it in your browser.
+
+---
+
+## 📖 Advanced Usage & Examples
+
+The real power of `tmng` comes from using tags to create structured, queryable logs.
+
+### Scenario: Tracking a Multi-Step Process
+
+Imagine you have a function that processes a file by fetching data, cleaning it, and saving it. Using tags, you can track the entire operation as well as each individual step.
+
+```python
+from timing import time_block
+import uuid
+
+def run_processing_pipeline(file_id: str):
+    # A unique ID for this specific run
+    pipeline_run_id = str(uuid.uuid4())
+    
+    # Time the entire pipeline run
+    with time_block("full_pipeline", tags={"file_id": file_id, "run_id": pipeline_run_id}):
+
+        print("Step 1: Fetching data...")
+        with time_block("fetch_data", tags={"source": "s3", "run_id": pipeline_run_id}):
+            # ... code to fetch data ...
+            time.sleep(0.5)
+
+        print("Step 2: Cleaning data...")
+        with time_block("clean_data", tags={"run_id": pipeline_run_id}):
+            # ... code to clean the data ...
+            time.sleep(0.8)
+
+        print("Step 3: Saving to database...")
+        with time_block("save_to_db", tags={"table": "processed_files", "run_id": pipeline_run_id}):
+            # ... code to save results ...
+            time.sleep(0.3)
+
+    print("Pipeline finished.")
+
+# In the report, you can now filter for a specific `run_id` 
+# to see the full timeline and duration of each step for that run.
+```
+
+### Manual Timing for Complex Scopes
+
+For scenarios where the start and end of an event occur in different functions or asynchronous callbacks, you can use manual controls.
+
+```python
+from timing import time_start, time_stop
+
+def on_request_start(request_id: str):
+    # Start the timer and store the event_id in the request state
+    event_id = time_start("http_request", tags={"request_id": request_id, "method": "GET"})
+    return event_id
+
+def on_request_end(event_id):
+    # When the request is finished, use the stored ID to stop the timer
+    if event_id:
+        time_stop(event_id)
+
+# --- Usage ---
+event_id = on_request_start("xyz-123")
+# ... application does work ...
+on_request_end(event_id)
+```
+
+## ⚙️ Configuration
+
+`tmng` can be configured via environment variables (ideal for servers and CI/CD) or a global config file (ideal for local development). Environment variables always take precedence.
+
+| Environment Variable  | CLI Command      | Description                                                               | Default           |
+| --------------------- | ---------------- | ------------------------------------------------------------------------- | ----------------- |
+| `TIMING_TOOL_ENABLED` | `timing enable`  | Set to `true` or `1` to enable timing.                                    | `false`           |
+| -                     | `timing disable` | Sets the global config to `false`.                                        | -                 |
+| `TIMING_DB_PATH`      | `timing init`    | Defines the full path to the database file. `init` creates it in the CWD. | `./timing_log.db` |
+
+**Example for CI/CD or Docker:**
+You can enable timing without a config file by setting an environment variable.
+```bash
+export TIMING_TOOL_ENABLED="true"
+export TIMING_DB_PATH="/app/data/performance.db"
+python my_script.py
+```
+
+## 🎛️ Command-Line Interface (CLI)
+
+The `timing` command is your primary tool for managing the system.
+
+| Command                                  | Description                                                                    |
+| :--------------------------------------- | :----------------------------------------------------------------------------- |
+| `timing status`                          | Checks if the tool is enabled, shows the DB path, and reports the event count. |
+| `timing enable`                          | Globally enables the timing tool by writing to the user config file.           |
+| `timing disable`                         | Globally disables the timing tool.                                             |
+| `timing init`                            | Creates the SQLite database file (`timing_log.db`) in the current directory.   |
+| `timing report`                          | Generates and opens the interactive HTML report.                               |
+| `timing report -o "perf.html" --no-open` | Customizes report generation: sets output file and prevents auto-opening.      |
+
+
+## 🤝 Contributing
+
+Contributions are welcome! This project uses `ruff` for linting and formatting. Please ensure your code conforms to the style by running `ruff check .` and `ruff format .` before submitting a pull request.
+
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/my-new-feature`).
+3.  Install development dependencies: `pip install -e .[dev]`.
+4.  Make your changes.
+5.  Run tests: `pytest`.
+6.  Submit a pull request.
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

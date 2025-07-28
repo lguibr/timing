@@ -31,7 +31,9 @@ class TimingEngine:
         self.get_storage().setup()
         print(f"✅ Timing database setup complete for: {timing_settings.DB_PATH}")
 
-    def start_event(self, marker_name: str, tags: Dict[str, Any]) -> Optional[UUID]:  # <<< FIX: Changed "UUID | None" to "Optional[UUID]"
+    def start_event(
+        self, marker_name: str, tags: Dict[str, Any]
+    ) -> Optional[UUID]:  # <<< FIX: Changed "UUID | None" to "Optional[UUID]"
         try:
             # --- MODIFICATION: Pass tags to the event model ---
             event = TimingEvent(marker_name=marker_name, tags=tags)
